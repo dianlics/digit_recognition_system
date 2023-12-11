@@ -32,7 +32,7 @@ If you run `CNN_dian.py`, a png file named `myCNNPerformance.png` will be genera
 
 * CNN training takes around 10 min, please be patient.
 
-![]()
+![](readme_image/myCNNPerformance.png)
 
 #### Digit Recognition System
 
