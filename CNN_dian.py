@@ -1,3 +1,10 @@
+"""
+This file contains functions for creating a convolutinoal neural network model
+for single digit recorgnition and analyzing the performance of the model.
+
+The functions include build_network and plot_performance.
+"""
+
 # import library
 from keras.datasets import mnist
 from keras.models import Sequential
@@ -8,10 +15,41 @@ import matplotlib.pyplot as plt
 
 
 def build_network(x_train, y_train, num_classes, model_name='keras_mnist.h5'):
+    '''
+    Build and train a convolutinoal neural network model used for single digit
+    recorgnition. The model contains 2 convolutional layers, 1 maxpooling
+    layer, 1 flatten layer and 2 regular dense layers. Various superparams for
+    the model could be found in this function. After that, model is saved, and
+    model and training history are returned.
+
+    **Parameters**
+
+        x_train: *numpy.ndarray*
+            A array of input figrue with 28*28 matrix representation of
+            training set.
+        y_train: *numpy.ndarray*
+            A array of output digit with binary vector representation of
+            training set.
+        num_classes: *int*
+            The number of neurons in the output layer.
+        model_name: *str, optional*
+            The model name.
+
+    **Returns**
+
+        model: *keras.engine.sequential.Sequential*
+            A class object that holds the trained model.
+        history:
+            A class object that holds the history of the model.
+    '''
+
     # Build the model
     model = Sequential()
-    model.add(Convolution2D(32, kernel_size=(3, 3), activation='relu', input_shape=(28, 28, 1)))
-    model.add(Convolution2D(64, kernel_size=(3, 3), activation='relu'))
+    model.add(Convolution2D(32, kernel_size=(3, 3),
+                            activation='relu',
+                            input_shape=(28, 28, 1)))
+    model.add(Convolution2D(64, kernel_size=(3, 3),
+                            activation='relu'))
     model.add(MaxPooling2D(pool_size=(2, 2)))
     model.add(Dropout(0.25))
     model.add(Flatten())
@@ -20,10 +58,16 @@ def build_network(x_train, y_train, num_classes, model_name='keras_mnist.h5'):
     model.add(Dense(num_classes, activation='softmax'))
 
     # Compile the model
-    model.compile(loss='categorical_crossentropy', optimizer='adam', metrics=['accuracy'])
+    model.compile(loss='categorical_crossentropy',
+                  optimizer='adam', metrics=['accuracy'])
 
     # Train the model
-    history = model.fit(x_train, y_train, validation_data=(x_test, y_test), epochs=10, batch_size=200, verbose=1)
+    history = model.fit(x_train,
+                        y_train,
+                        validation_data=(x_test, y_test),
+                        epochs=10,
+                        batch_size=200,
+                        verbose=1)
     print("The model has successfully trained.")
 
     # Save the model
@@ -33,13 +77,14 @@ def build_network(x_train, y_train, num_classes, model_name='keras_mnist.h5'):
     return model, history
 
 
-def plot_performance(model, history, x_test, y_test, output_name="NNperformance.png"):
+def plot_performance(model, history, x_test, y_test,
+                     output_name="NNperformance.png"):
     '''
     Retrieve accuracies from the history object and save them to a figure.
 
     **Parameters**
 
-        model:
+        model: *keras.engine.sequential.Sequential*
             A class object that holds the trained model.
         history:
             A class object that holds the history of the model.
@@ -99,7 +144,10 @@ if __name__ == '__main__':
     num_classes = 10
 
     # Build network
-    model, history = build_network(x_train, y_train, num_classes, 'CNN_digit.h5')
+    model, history = build_network(x_train,
+                                   y_train,
+                                   num_classes,
+                                   'CNN_digit.h5')
 
     # Observe the performance of the network
     plot_performance(model, history, x_test, y_test, "myCNNPerformance.png")

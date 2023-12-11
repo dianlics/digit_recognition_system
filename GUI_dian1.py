@@ -1,17 +1,27 @@
 """
-This file contains functions for solving the Lazor game and giving the solution
-board from a given board game information. Besides, a class specialized for
-different types of block are defined, whose methods are used to judge whether a
-lazor would hit the block and determine the next state (position and velocity
-direction) of that lazor if hitting.
+This file contains two classes： digit_solver and result_panel.
 
-The functions include lazor_solver, _get_path, _next_block_pos,
-and _is_out_of_board. The classes include block and its three subclasses:
-reflect_block, refract_block, and refract_block, with two methods: is_Hit
-and next_state.
+The digit_solver is for building the first layer of GUI window (root). It
+contains several methods for user: clear_canvas, select_color, activate_event
+(and drawing), eraser and Recognize_Digit. Several private methods are also
+defined. In the visualization of the root window, the tool bar is on the left
+hand side, where several tools could be used: setting the ink color, eraser for
+the ink, recognition for the ink, clearing all the ink and setting the ink
+thinkness. On the right hand side, there is a white paper/canvas for you to
+draw.
 
-Please do not change resolution and scale of your laptop when you use this code. If you change it , please restart your editor.
+After clicking `Recognize Digit(s)` button, a window named `Summary of Digit
+Recognition` pops up, where a figrue showing anaylysis result with original ink
+is on the left, and a corresponding summary table is on the right. The
+result_panel class is defined for implementing this window. It contains
+savefigure and savetable methods for user to save interested result for
+subsequent analysis. Also, it contains some private methods and two global
+variables.
+
+Please do not change resolution and scale of your laptop when you use this
+code. If you change it , please restart your editor.
 """
+
 # import library
 import tkinter as tk
 from tkinter import ttk
@@ -20,11 +30,78 @@ import numpy as np
 from PIL import ImageGrab
 from tensorflow.keras.models import load_model
 import os
+import sys
 from screeninfo import get_monitors
 
 
 class digit_solver:
+    '''
+    Building the first layer of GUI window (root). It contains several methods
+    for user: clear_canvas, select_color, activate_event (and drawing), eraser
+    and Recognize_Digit. Several private methods are also defined.
+
+    **Attributes**
+        root: *tkinter.Tk*
+            holding the root window
+
+        model: *keras.engine.sequential.Sequential*
+            holding the trained model
+
+        lastx, lasty: *NoneType*
+            storage of pos of pointer
+
+        pointer: *str*
+            storage of default pointer color
+
+        erase: *str*
+            storage of eraser color
+
+        folder_name: *str*
+            storage of folder name of results
+
+        folder_path: *str*
+            storage of folder path of results
+
+        cv: *tk.Canvas*
+            canvas for drawing
+
+        savebutton: *tk.Button*
+            save button
+
+        clearbutton: *tk.Button*
+            clear button
+
+        pick_color: *tk.LabelFrame*
+            frame of color for picking color
+
+        label: *tk.Label*
+            label for color option tool
+
+        pointer_frame: *tk.LabelFrame*
+            frame for scale bar of ink
+
+        label2: *tk.Label*
+            label for size bar tool
+
+        pointer_size: *tk.Scale*
+            tool for scaling the thickness of ink
+
+    **Returns**
+        digit_solver: *class: digit_solver*
+            The digit_solver class container
+    '''
+
     def __init__(self, root, model):
+        '''
+        Initialize a digit_solver object.
+
+        **Parameters**
+            root: *tkinter.Tk*
+                holding the root window
+
+            model: *keras.engine.sequential.Sequential*
+                holding the trained model
+        '''
         # create the root window and set some basic features
         self.root = root
         self.root.title("Handwritten Digit Recognition Device")
@@ -91,7 +168,8 @@ class digit_solver:
                                      command=self.clear_canvas)
         self.clearbutton.grid(row=3, column=0, sticky='nsew')
 
-        # create a color pannel (a LabelFrame of Buttons), that is we can pick a color for drawing from color pannel
+        # create a color pannel (a LabelFrame of Buttons), that is we can pick
+        # a color for drawing from color pannel
         self.pick_color = tk.LabelFrame(self.root,
                                         bd=5,
                                         relief=tk.RIDGE,
@@ -107,6 +185,7 @@ class digit_solver:
         self.pick_color.rowconfigure(6, weight=1)
         self.pick_color.columnconfigure(0, weight=1)
         self.pick_color.columnconfigure(1, weight=1)
+        # create a label for color option pannel
         self.label = tk.Label(self.pick_color,
                               bd=2,
                               text="Color Options",
@@ -126,7 +205,8 @@ class digit_solver:
             if i == 7:
                 i, j = 1, 1
 
-        # create a scale bar (a LabelFrame of a Scale) for adjustment of pointer and eraser's size
+        # create a scale bar (a LabelFrame of a Scale) for adjustment of
+        # pointer and eraser's size
         self.pointer_frame = tk.LabelFrame(self.root,
                                            bd=5,
                                            bg='white',
@@ -136,6 +216,7 @@ class digit_solver:
         self.pointer_frame.rowconfigure(0, weight=1)
         self.pointer_frame.rowconfigure(1, weight=9)
         self.pointer_frame.columnconfigure(0, weight=1)
+        # create a label for ink size pannel
         self.label2 = tk.Label(self.pointer_frame,
                                bd=2,
                                text="Size Bar",
@@ -146,10 +227,13 @@ class digit_solver:
                                      orient=tk.VERTICAL,
                                      from_=20,
                                      to=0)
-        self.pointer_size.set(12)
+        self.pointer_size.set(12)  # set 12 as default ink thickness
         self.pointer_size.grid(row=1, sticky='nsew')
 
     def __clear_folder(self):
+        '''
+        clear the result folder
+        '''
         if not os.path.exists(self.folder_name):
             os.makedirs(self.folder_name)
         else:
@@ -166,12 +250,14 @@ class digit_solver:
                     print(f"Error deleting {file_path}: {e}")
 
     def __delete_file(self, filename):
+        '''
+        clear specified file
+        '''
         # Construct the full path to the file
         file_path = os.path.join(self.folder_path, filename)
         try:
             # Attempt to remove the file
             os.remove(file_path)
-            # print(f"File '{filename}' in directory '{file_path}' has been deleted.")
         except FileNotFoundError:
             print(f"File '{filename}' not found in directory '{file_path}'.")
         except Exception as e:
@@ -227,9 +313,28 @@ class digit_solver:
         self.lastx, self.lasty = x, y
 
     def select_color(self, col):
+        '''
+        select specified color
+
+        **Parameters**
+
+            col: 'str'
+                color name
+
+        **Returns**
+
+            None
+        '''
         self.pointer = col
 
     def eraser(self):
+        '''
+        set erase for pointer
+
+        **Returns**
+
+            None
+        '''
         self.pointer = self.erase
 
     def Recognize_Digit(self):
@@ -241,7 +346,7 @@ class digit_solver:
             None
         '''
         # name setting for saved canvas screenshot
-        filename = f'Original_digits.png'
+        filename = 'Original_digits.png'
         # use another name for cv to avoid mixing with cv2
         my_cv = self.cv
 
@@ -275,9 +380,12 @@ class digit_solver:
         # y1 *= pc_scale
 
         # get the screenshot for canvas and save it in a png format
-        # buffer to avoid screenshot the region outside the canvas (esp, the slight separation of two edges of windows).
+        # buffer to avoid screenshot the region outside the canvas (esp, the
+        # slight separation of two edges of windows).
         bf = 5
-        ImageGrab.grab().crop((x+bf, y+bf, x1-bf, y1-bf)).save(self.folder_path + '/' + filename)
+        ImageGrab.grab().crop((x+bf, y+bf, x1-bf, y1-bf)).save(self.folder_path
+                                                               + '/'
+                                                               + filename)
 
         image = cv2.imread(self.folder_path + '/' + filename, cv2.IMREAD_COLOR)
         gray = cv2.cvtColor(image.copy(), cv2.COLOR_BGR2GRAY)
@@ -307,20 +415,22 @@ class digit_solver:
                           (0, 0, 255),
                           2)
 
-            # Cropping out the digit from the image corresponding to the current contours in the for loop
+            # Cropping out the digit from the image corresponding to the
+            # current contours in the for loop
             digit = th[y:y + h, x:x + w]
 
             # Resizing that digit to (18, 18)
             resized_digit = cv2.resize(digit, (18, 18))
 
-            # Padding the digit with 5 pixels of black color (zeros) in each side to finally produce the image of (28, 28)
+            # Padding the digit with 5 pixels of black color (zeros) in each
+            # side to finally produce the image of (28, 28)
             padded_digit = np.pad(resized_digit,
                                   ((5, 5), (5, 5)),
                                   "constant",
                                   constant_values=0)
 
             digit = padded_digit.reshape(1, 28, 28, 1)
-            #print(type(digit))
+            # print(type(digit))
             digit = digit / 255.0
 
             pred = self.model.predict([digit])[0]
@@ -347,13 +457,14 @@ class digit_solver:
                         thickness)
 
         # save the final image with recorgnized digits
-        filename1 = f'Recognized_digits.png'
+        filename1 = 'Recognized_digits.png'
         imagedir = self.folder_path + '/' + filename1
         cv2.imwrite(imagedir, image)
 
         crtfld = self.folder_path
 
-        # display the result summary of digit(s) recognition in a toplevel window
+        # display the result summary of digit(s) recognition in a toplevel
+        # window
         top1 = tk.Toplevel()
         result_panel(top1, imagedir, rgcrlt, crtfld)
         top1.mainloop()
@@ -363,11 +474,69 @@ class digit_solver:
         self.__delete_file(filename1)
 
     @staticmethod
-    def nneg(x): return (x > 0) * x
+    def nneg(x): return (x > 0) * x  # set neg to 0
 
 
 class result_panel:
+    '''
+    Building the second layer of GUI window (Summary of Digit Recognition).
+    It contains several methods for user: savefigrue, savetable. Several
+    private methods are also defined.
+
+    **Attributes**
+        top1: *tkinter.Toplevel*
+            holding the Summary of Digit Recognition window
+
+        imagedir: *str*
+            directory of temporary recognized figure
+
+        rgcrlt *list, list, str*
+            list of result (recognized digits and percentage)
+
+        crtfld: *str*
+            storage of folder path of results
+
+        btnfg: *tk.Button*
+            button for saving figure
+
+        image: *tk.PhotoImage*
+            image of temporary recognized figure
+
+        rgcimg: *tk.Label*
+            placeholder for showing the image
+
+        btntb : *tk.Button*
+            button for saving table
+
+        rlttable: *ttk.Treeview*
+            table-like wedgit for showing the recognized digits and percentage
+            in the window
+
+        tablehead: *list, str*
+            list of table heading title
+
+    **Returns**
+        result_panel: *class: result_panel*
+            The result_panel class container
+    '''
+
     def __init__(self, top1, imagedir, rgcrlt, crtfld):
+        '''
+        Initialize a result_panel object.
+
+        **Parameters**
+            top1: *tkinter.Toplevel*
+                holding the Summary of Digit Recognition window
+
+            imagedir: *str*
+                directory of temporary recognized figure
+
+            rgcrlt *list, list, str*
+                list of result (recognized digits and percentage)
+
+            crtfld: *str*
+                storage of folder path of results
+        '''
         # create the root window and set some basic features
         self.top1 = top1
         self.top1.title("Summary of Digit Recognition")
@@ -397,7 +566,8 @@ class result_panel:
         # label wedgit for figure title
         self.btnfg = tk.Button(self.top1,
                                bd=5,
-                               text="Result Figure with Recognized Digit(s) (Click to Save)",
+                               text="Result Figure with Recognized Digit(s)"
+                               " (Click to Save)",
                                font=("Arial", 24, "bold"),
                                relief=tk.RIDGE,
                                command=self.savefigure)
@@ -418,17 +588,19 @@ class result_panel:
                                command=self.savetable)
         self.btntb.grid(row=0, column=1, sticky='nsew')
 
-        # treeview for showing the result data of recognized digit
+        # set the style for ttk wegdit
         s = ttk.Style()
         s.theme_use('clam')
-        # Add the rowheight
-        s.configure('Treeview', rowheight=30, foreground='black', font=("Arial", 16))
-        s.configure("Treeview.Heading", foreground='black', font=("Arial", 16, "bold"))
+        s.configure('Treeview', rowheight=30, foreground='black',
+                    font=("Arial", 16))
+        s.configure("Treeview.Heading", foreground='black',
+                    font=("Arial", 16, "bold"))
 
+        # treeview for showing the result data of recognized digit
         self.rlttable = ttk.Treeview(self.top1,
                                      columns=('#', 'regdig', '%'),
                                      show='headings')
-
+        # table heading title
         self.tablehead = ['#', 'Predicted Digit', 'Probability (%)']
         self.rlttable.heading('#', text=self.tablehead[0])
         self.rlttable.column('#', anchor=tk.CENTER, stretch=tk.NO, width=80)
@@ -440,12 +612,28 @@ class result_panel:
         self.__rlt2table()
 
     def __rlt2table(self):
+        '''
+        add the analysis result to treeview object in the result window.
+
+        **Returns**
+
+            None
+        '''
+        # reverse the order of inserted item since later added to the top
         for i in range(len(self.rgcrlt[0])):
             i_rev = len(self.rgcrlt[0])-1-i
             data = (str(i_rev+1), self.rgcrlt[0][i_rev], self.rgcrlt[1][i_rev])
             self.rlttable.insert(parent='', index=0, values=data)
 
     def savefigure(self):
+        '''
+        save result figure into a png file.
+
+        **Returns**
+
+            None
+        '''
+        # construct the png file directory where figrue to be saved
         global image_number, isSave
         if not isSave:
             image_number += 1
@@ -454,9 +642,18 @@ class result_panel:
         figuredir = self.crtfld + '/' + filename
         self.image.write(figuredir)
 
+        # if save successfully, a messagebox pops up.
         tk.messagebox.showinfo("Save to png file", "Figure was saved!")
 
     def savetable(self):
+        '''
+        save result table into a txt file.
+
+        **Returns**
+
+            None
+        '''
+        # construct the txt file directory where table to be saved
         global image_number, isSave
         if not isSave:
             image_number += 1
@@ -466,8 +663,10 @@ class result_panel:
         with open(tabledir, "w") as file:
             file.write('\t\t'.join(self.tablehead)+'\n')
             for i in range(len(self.rgcrlt[0])):
-                file.write(str(i+1)+'\t\t'+self.rgcrlt[0][i]+'\t\t\t\t\t'+self.rgcrlt[1][i]+'\n')
+                file.write(str(i+1) + '\t\t' + self.rgcrlt[0][i] +
+                           '\t\t\t\t\t' + self.rgcrlt[1][i]+'\n')
 
+            # if save successfully, a messagebox pops up.
             tk.messagebox.showinfo("Save to txt file", "Table was saved!")
 
 
@@ -477,10 +676,21 @@ if __name__ == '__main__':
     model_name = 'CNN_digit.h5'
     # join the current working directory with the model name
     model_dir = os.path.join(os.getcwd(), model_name)
-    model = load_model(model_dir)
-    print("CNN model is loaded successfully. Please go to the Tk window...")
+
+    # handle the case model does not exist or typing a wrong name
+    try:
+        model = load_model(model_dir)
+        print("CNN model is loaded successfully. Please go to the Tk window...")
+    except OSError:
+        print("The model doest not exit! Please check the model_name or create"
+              " the model")
+        sys.exit()
+
     print("------------------------------------------------------------------")
-    print("Please make sure when hitting Recognize Digit(s) button, the canvas wedgit in the root Tk window is not hidden by any object/pattern in your PC monitor window. Maximizing the Tk root window is recommanded!")
+    print("Please make sure when hitting Recognize Digit(s) button, the canvas"
+          " wedgit in the root Tk window is not hidden by any object/pattern"
+          " in your PC monitor window. Maximizing the Tk root window is"
+          " recommanded!")
     print("------------------------------------------------------------------")
 
     # create the root window and set some basic features

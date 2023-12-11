@@ -10,7 +10,7 @@ This simple digit recognition system is an APP for detecting the hardwritten dig
 
 * PC monitor with scale of 200% and display resolution of 2880x1920
 * Python version: 3.9+
-* Python libraries: `tkinter`, `cv2`, `numpy`, `PIL`, `tensorflow`, `os`, `screeninfo`, `matplotlib` and `keras`
+* Python libraries: `tkinter`, `cv2`, `numpy`, `PIL`, `tensorflow`, `os`, `screeninfo`, `sys`, `matplotlib` and `keras`
 
 ## Usage
 
@@ -22,13 +22,15 @@ If you run `CNN_dian.py`, a png file named `myCNNPerformance.png` will be genera
 
 Note: 
 * CNN training takes around 10 min, please be patient.
+* The size of the model file `CNN_digit.h5` is 27,947 KB.
 * If you use your own model, please change the model name in `GUI_dian1.py`.
+* Our model refers to the one from [Analytics Vidhya](https://medium.com/analytics-vidhya/handwritten-digit-recognition-gui-app-46e3d7b37287).
 
 <p align="center">
 <img src="readme_image/myCNNPerformance.png" width = "600" />
 </p>
 
-#### Digit Recognition System (1st/root window)
+#### Digit Recognition System (1st/Root Window)
 
 After model gets ready, you can use our Digit Recognition System!
 
@@ -43,8 +45,9 @@ If you want to let app recognize the digit you draw, please click `Recognize Dig
 Note:
 * For a relative recognition, size around 10 for ink is recommanded.
 * Please make sure when hitting 'Recognize Digit(s)' button, the canvas wedgit in the root Tk window is not hidden by any object/pattern in your PC monitor window. Maximizing the Tk root window is recommanded!
+* For a single digit recorgnition, your ink must be continuous. Otherwise, multiple digit recognition would be conducted.
 
-#### Digit Recognition System (2nd window)
+#### Digit Recognition System (2nd Window)
 
 After clicking `Recognize Digit(s)` button, a window named `Summary of Digit Recognition` pops up, where a figrue showing anaylysis result with original ink is on the left, and a corresponding summary table is on the right. A example `Summary of Digit Recognition` window is shown below.
 
@@ -76,7 +79,7 @@ Note:
 
 ## Reference
 
-#### Articles and Guides for this Digit Recognition System
+#### General Guides for this Digit Recognition System
 * [Handwritten Digit Recognition GUI App](https://medium.com/analytics-vidhya/handwritten-digit-recognition-gui-app-46e3d7b37287)
 
 #### Convolution Neural Network
