@@ -99,7 +99,7 @@ if __name__ == '__main__':
     num_classes = 10
 
     # Build network
-    model, history = build_network(x_train, y_train, num_classes, 'keras_mnist.h5')
+    model, history = build_network(x_train, y_train, num_classes, 'CNN_digit.h5')
 
     # Observe the performance of the network
     plot_performance(model, history, x_test, y_test, "myCNNPerformance.png")

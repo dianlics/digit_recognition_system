@@ -4,17 +4,7 @@
 
 This simple digit recognition system is an APP for detecting the hardwritten digits in the screen. It uses a convolution neural network (CNN). It allows users to write in various colors besides black. Besides, It is a convenient and easily accessible app, with a good-looking GUI built using tkinter with thorough tools, by which we can save the valuable result for subsequent analysis of differnet AI model. However, the RNN model currently used does not have very high accuracy for hardwritten digits recognition (esp, the number '1').
 
-Note: The topics of this project are object-oriented programming, AI/ML and GUI.
-
-## Features
-
-
-
-
-
-
-
-
+* The topics of this project are object-oriented programming, AI/ML and GUI.
 
 ## Requirement
 
@@ -26,25 +16,51 @@ Note: The topics of this project are object-oriented programming, AI/ML and GUI.
 
 #### Training Model for Digit Recognition System
 
-First, you need to train the CNN for the app. For this, please run `CNN_dian.py` directly. However, you could also skip this step and using your own model for recognition, but the model should be able to be used by `load_model` method in the `tensorflow.keras.models` module and used for the grayscale figure of type of `numpy.ndarray` with format of 1x28x28x1 (= \[# of samples\]x\[width\]x\[height\]x\[channels\]).
+First, you need to train the CNN for the app. For this, please run `CNN_dian.py` directly and then a model is stored in the file `CNN_digit.h5`. However, you could also skip this step and using your own model for recognition, but the model should be able to be used by `load_model` method in the `tensorflow.keras.models` module and used for the grayscale figure of type of `numpy.ndarray` with format of 1x28x28x1 (= \[# of samples\]x\[width\]x\[height\]x\[channels\]).
 
-If you run `CNN_dian.py`, a png file named `myCNNPerformance.png` will be generated to show the model accuracy and loss for both train and test set. An example `myCNNPerformance.png` is shown below. From this figrue, the accuracy of our CNN model for test set is higher than 98%.
+If you run `CNN_dian.py`, a png file named `myCNNPerformance.png` will be generated to show the model accuracy and loss for both train and test set. An example figrue of CNN model performance is shown below. From this figrue, the accuracy of our CNN model for test set is higher than 98%.
 
+Note: 
 * CNN training takes around 10 min, please be patient.
+* If you use your own model, please change the model name in `GUI_dian1.py`.
 
-![](readme_image/myCNNPerformance.png)
+<p align="center">
+<img src="readme_image/myCNNPerformance.png" width = "600" />
+</p>
 
-#### Digit Recognition System
+#### Digit Recognition System (1st/root window)
 
+After model gets ready, you can use our Digit Recognition System!
 
+After running `GUI_dian1.py` directly, a wonderful GUI is shown and you can start your journey of exploring digit recognition using CNN! The figure of GUI is shown below. The tool bar is on the left hand side, where several tools could be used: setting the ink color, eraser for the ink, recognition for the ink, clearing all the ink and setting the ink thinkness. On the right hand side, there is a white paper/canvas for you to draw.
 
+If you want to let app recognize the digit you draw, please click `Recognize Digit(s)` button. After clicking, the digit analysis would be conducted using loaded (CNN) model and a new window is generated for showing the analysis data of digit recognition.
 
+<p align="center">
+<img src="readme_image/GUI_root.png" width = "600" />
+</p>
 
+Note:
+* For a relative recognition, size around 10 for ink is recommanded.
+* Please make sure when hitting 'Recognize Digit(s)' button, the canvas wedgit in the root Tk window is not hidden by any object/pattern in your PC monitor window. Maximizing the Tk root window is recommanded!
 
+#### Digit Recognition System (2nd window)
 
+After clicking `Recognize Digit(s)` button, a window named `Summary of Digit Recognition` pops up, where a figrue showing anaylysis result with original ink is on the left, and a corresponding summary table is on the right. A example `Summary of Digit Recognition` window is shown below.
 
+<p align="center">
+<img src="readme_image/GUI_2.png" width = "600" />
+</p>
 
+In the result figure, each recognized digit is wrapped by a red rectangle, on top of which index for the digit and recorgnition result digit could be found. To save this figure, please click the button on the top, after which a png file named `Result_Figure_{#}` is generated in the folder `Results` under the current directory. # represents the number of time of saving figure or table for different digit recognition process.
 
+The result table shows the predicted digits and probability of prediction for each recognized digit with corresponding index. Similarly, to save this table, please click the button on the top, after which a txt file named `Result_Table_{#}` is generated in the folder `Results` under the current directory.
+
+A example of saved figure and table is shown in the `example` folder.
+
+Note:
+* Please remember to save the analysis you want, this app would not save automatically for you.
+* The accuracy of ths app is not 100%. Especially, the recognition of 1 has very low accuracy. A potential reason would be using `cv2` to separate each digit. For 1, the width of separation would be short, and so CNN may not recognize the pattern correctly.
 
 ## Caveats
 

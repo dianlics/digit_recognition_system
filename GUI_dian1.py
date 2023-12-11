@@ -320,6 +320,7 @@ class digit_solver:
                                   constant_values=0)
 
             digit = padded_digit.reshape(1, 28, 28, 1)
+            #print(type(digit))
             digit = digit / 255.0
 
             pred = self.model.predict([digit])[0]
@@ -472,7 +473,11 @@ class result_panel:
 
 if __name__ == '__main__':
     # load the CNN model for handwritten digit recognition
-    model = load_model(r'C:\Users\dianl\Desktop\fall 2023\software\final project\keras_mnist.h5')
+    # name of CNN model
+    model_name = 'CNN_digit.h5'
+    # join the current working directory with the model name
+    model_dir = os.path.join(os.getcwd(), model_name)
+    model = load_model(model_dir)
     print("CNN model is loaded successfully. Please go to the Tk window...")
     print("------------------------------------------------------------------")
     print("Please make sure when hitting Recognize Digit(s) button, the canvas wedgit in the root Tk window is not hidden by any object/pattern in your PC monitor window. Maximizing the Tk root window is recommanded!")
