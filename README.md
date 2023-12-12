@@ -69,7 +69,7 @@ A example of saved figure and table is shown in the `example` folder.
 
 Note:
 * Please remember to save the analysis you want, this app would not save automatically for you.
-* The accuracy of ths app is not 100%. Especially, the recognition of 1 has very low accuracy. A potential reason would be using `cv2` to separate each digit. For 1, the width of separation would be short, and so CNN may not recognize the pattern correctly.
+* The accuracy of ths app is not 100%. Especially, the recognition of 1 has very low accuracy. A potential reason would be using `cv2` to separate each digit. For digit '1', the width of separation would be short, and so CNN may not recognize the pattern correctly.
 * When use this app for the first time after opening the editor, it may malfunction because of window size. If you find this problem, please close all the windows and repeat the process again.
 
 ## Caveats
