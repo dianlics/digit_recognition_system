@@ -2,7 +2,7 @@
 
 ## Description
 
-This simple digit recognition system is an APP for detecting the hardwritten digits in the screen. It uses a convolution neural network (CNN). It allows users to write in various colors besides black. Besides, It is a convenient and easily accessible app, with a good-looking GUI built using tkinter with thorough tools, by which we can save the valuable result for subsequent analysis of differnet AI model. However, the RNN model currently used does not have very high accuracy for hardwritten digits recognition (esp, the number '1').
+This simple digit recognition system is an APP for detecting the hardwritten digits in the screen. It uses a convolution neural network (CNN). It allows users to write in various colors besides black. Besides, it is a convenient and easily accessible app, with a good-looking GUI built using tkinter with thorough tools, by which we can save the valuable result for subsequent analysis of different AI model. However, the RNN model currently used does not have very high accuracy for hardwritten digits recognition (esp, the number '1').
 
 * The topics of this project are object-oriented programming, AI/ML and GUI.
 
@@ -18,13 +18,19 @@ This simple digit recognition system is an APP for detecting the hardwritten dig
 
 First, you need to train the CNN for the app. For this, please run `CNN_dian.py` directly and then a model is stored in the file `CNN_digit.h5`. However, you could also skip this step and using your own model for recognition, but the model should be able to be used by `load_model` method in the `tensorflow.keras.models` module and used for the grayscale figure of type of `numpy.ndarray` with format of 1x28x28x1 (= \[# of samples\]x\[width\]x\[height\]x\[channels\]).
 
+The CNN model built here for single digit recorgnition contains 2 convolutional layers, 1 maxpooling layer, 1 flatten layer and 2 regular dense layers. A general architecture of CNN could be found below.
+
+<p align="center">
+<img src="readme_image/CNN.png" width = "600" />
+</p>
+
 If you run `CNN_dian.py`, a png file named `myCNNPerformance.png` will be generated to show the model accuracy and loss for both train and test set. An example figrue of CNN model performance is shown below. From this figrue, the accuracy of our CNN model for test set is higher than 98%.
 
 Note: 
 * CNN training takes around 10 min, please be patient.
 * The size of the model file `CNN_digit.h5` is 27,947 KB.
 * If you use your own model, please change the model name in `GUI_dian1.py`.
-* Our model refers to the one from [Analytics Vidhya](https://medium.com/analytics-vidhya/handwritten-digit-recognition-gui-app-46e3d7b37287).
+* Our model refers to the one from [jaideep singh](https://medium.com/analytics-vidhya/handwritten-digit-recognition-gui-app-46e3d7b37287).
 
 <p align="center">
 <img src="readme_image/myCNNPerformance.png" width = "600" />
@@ -72,7 +78,7 @@ Note:
 * Please make sure when hitting 'Recognize Digit(s)' button, the canvas wedgit in the root Tk window is not hidden by any object/pattern in your PC monitor window. Maximizing the Tk root window is recommanded!
 * Please save the result figrue and table (with reconization data) mannually if you want them for later analysis. App would not save automatically for you.
 
-## Future work
+## Future Work
 * Enable the result handwritten digits retrain the loaded model to get a more rubust and accurate model.
 * Build a model with recognition of any ASCII character.
 * Improve the accuracy of recognition of digit '1'.
@@ -84,7 +90,7 @@ Note:
 
 #### Convolution Neural Network
 * [Convolutional Neural Networks, Explained](https://towardsdatascience.com/convolutional-neural-networks-explained-9cc5188c4939)
-* [How do convolutional neural networks work?](https://www.ibm.com/topics/convolutional-neural-networks)
+* [A Comprehensive Guide to Convolutional Neural Networks — the ELI5 way](https://towardsdatascience.com/a-comprehensive-guide-to-convolutional-neural-networks-the-eli5-way-3bd2b1164a53)
 * [Tensorflow - for beginners](https://www.tensorflow.org/tutorials)
 
 #### Tkinter
